@@ -198,22 +198,6 @@
     z-index:2;
   }
 
-  .view-counter{
-    position:fixed;
-    bottom:16px;left:18px;
-    z-index:3;
-    display:flex;align-items:center;gap:7px;
-    background: var(--panel);
-    border:1px solid var(--panel-border);
-    border-radius:999px;
-    padding:7px 13px;
-    font-size:11.5px;
-    color:var(--muted);
-    letter-spacing:0.01em;
-  }
-  .view-counter svg{width:13px;height:13px;color:var(--accent);flex-shrink:0;}
-  .view-counter b{color:var(--text);font-weight:600;}
-
   @media (prefers-reduced-motion: reduce){
     .card{animation:none;}
   }
@@ -262,7 +246,7 @@
 
   <div class="panel" id="panel-about">
     <div class="panel-inner about-text">
-      <p><b>im unit !</b></p>
+      <p><b>im unity !</b></p>
       <p>I like listening to music and I love cats.</p>
       <p>I like to code (experienced skid)</p>
     </div>
@@ -275,14 +259,6 @@
       <ul class="invite-list" id="inviteList"></ul>
     </div>
   </div>
-</div>
-
-<div class="view-counter" id="viewCounter">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/>
-    <circle cx="12" cy="12" r="3"/>
-  </svg>
-  <span id="viewCountLabel">— views</span>
 </div>
 
 <footer>unity.lolz</footer>
@@ -418,28 +394,6 @@
   } else {
     requestAnimationFrame(sweepTick);
   }
-
-  // ============ VIEW COUNTER ============
-  // Static sites can't count views themselves, so this pings a free public
-  // counter API (CountAPI) that persists a shared number across everyone
-  // who loads the page. Change the namespace/key below if you fork this
-  // for another page, otherwise everyone using this exact pair shares a count.
-  const viewCountLabel = document.getElementById('viewCountLabel');
-  const COUNTER_NAMESPACE = 'unity-lolz-bio-8f2k';
-  const COUNTER_KEY = 'views';
-
-  fetch(`https://api.countapi.xyz/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`)
-    .then(res => res.json())
-    .then(data => {
-      if (typeof data.value === 'number'){
-        viewCountLabel.textContent = `${data.value.toLocaleString()} views`;
-      } else {
-        viewCountLabel.textContent = 'views unavailable';
-      }
-    })
-    .catch(() => {
-      viewCountLabel.textContent = 'views unavailable';
-    });
 
   // faint drifting particles on black bg
   const canvas = document.getElementById('fx');
