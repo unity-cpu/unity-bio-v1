@@ -405,34 +405,35 @@
     h = canvas.height = window.innerHeight;
   }
   function initParticles(){
-    particles = Array.from({length: 45}, () => ({
+    particles = Array.from({length: 90}, () => ({
       x: Math.random()*w,
       y: Math.random()*h,
-      r: Math.random()*1.4 + 0.3,
-      vy: Math.random()*0.15 + 0.03,
-      o: Math.random()*0.4 + 0.1
+      r: Math.random()*2.2 + 0.4,
+      vy: Math.random()*0.5 + 0.15,
+      vx: (Math.random()-0.5) * 0.6,
+      o: Math.random()*0.6 + 0.2,
+      pink: Math.random() > 0.4
     }));
   }
+  let fxTime = 0;
   function tick(){
+    fxTime += 0.02;
     ctx.clearRect(0,0,w,h);
-    ctx.fillStyle = '#B084F5';
     for(const p of particles){
-      ctx.globalAlpha = p.o;
+      ctx.fillStyle = p.pink ? '#FF66C4' : '#FFFFFF';
+      ctx.globalAlpha = p.o * (0.6 + Math.sin(fxTime * 3 + p.x) * 0.4);
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
       ctx.fill();
       p.y -= p.vy;
+      p.x += p.vx;
       if(p.y < -5){ p.y = h+5; p.x = Math.random()*w; }
+      if(p.x < -5) p.x = w+5;
+      if(p.x > w+5) p.x = -5;
     }
     ctx.globalAlpha = 1;
     requestAnimationFrame(tick);
   }
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  resize();
-  initParticles();
-  window.addEventListener('resize', () => { resize(); initParticles(); });
-  if(!reduceMotion) tick();
 </script>
 
 </body>
