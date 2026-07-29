@@ -32,8 +32,36 @@
     position:relative;
   }
 
+  /* ============ BACKGROUND MEDIA LAYER ============ */
+  /* Sits behind everything else. Fill in BACKGROUND config near the
+     bottom of the script to use an image or video. */
+  #bgMediaWrap{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    background: var(--bg);
+  }
+  #bgMediaWrap img,
+  #bgMediaWrap video{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+  }
+  /* dark overlay so text/panels stay readable on top of any media */
+  #bgMediaWrap::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: rgba(0,0,0,0.55);
+  }
+
   .vignette{
     position:fixed;inset:0;
+    z-index:1;
     background: radial-gradient(ellipse at 50% 40%, rgba(124,77,255,0.14), transparent 60%);
     pointer-events:none;
     animation: vignettePulse 3s ease-in-out infinite;
@@ -44,10 +72,10 @@
   }
   canvas#fx{
     position:fixed;inset:0;
+    z-index:1;
     width:100%;height:100%;
     pointer-events:none;
   }
-
   .card{
     position:relative;
     z-index:2;
@@ -218,6 +246,10 @@
 </head>
 <body>
 
+<!-- ============ BACKGROUND MEDIA (image or video) ============ -->
+<!-- Configure this in the BACKGROUND object near the bottom of the script -->
+<div id="bgMediaWrap"></div>
+
 <div class="vignette"></div>
 <canvas id="fx"></canvas>
 
@@ -277,6 +309,39 @@
 <footer>unity.lolz</footer>
 
 <script>
+  // ============================================================
+  // BACKGROUND MEDIA CONFIG
+  // Set type to 'image' or 'video' and paste your link in url.
+  // Leave type as 'none' to keep the plain black background.
+  //   - image: any direct image link (.jpg/.png/.webp/.gif)
+  //   - video: any direct video link (.mp4/.webm) — it will
+  //            autoplay muted, loop, and cover the whole page
+  // ============================================================
+  const BACKGROUND = {
+    type: 'video',   // 'image' | 'video' | 'none'
+    url: 'https://raw.githubusercontent.com/unity-cpu/bio-assets/main/2026-03-21_11-01-05.mp4'         // e.g. 'https://i.imgur.com/yourimage.jpg'
+                    // or   'https://example.com/yourvideo.mp4'
+  };
+
+  (function setupBackground(){
+    const wrap = document.getElementById('bgMediaWrap');
+    if (BACKGROUND.type === 'image' && BACKGROUND.url) {
+      const img = document.createElement('img');
+      img.src = BACKGROUND.url;
+      img.alt = '';
+      wrap.appendChild(img);
+    } else if (BACKGROUND.type === 'video' && BACKGROUND.url) {
+      const vid = document.createElement('video');
+      vid.src = BACKGROUND.url;
+      vid.autoplay = true;
+      vid.muted = true;
+      vid.loop = true;
+      vid.playsInline = true;
+      wrap.appendChild(vid);
+      vid.play().catch(() => {});
+    }
+  })();
+
   // ============ CONFIG: discord invites ============
   const INVITES = [
     { label: "apk studio", url: "https://discord.gg/J2ezjghdBN" },
