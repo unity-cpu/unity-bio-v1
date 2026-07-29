@@ -9,13 +9,13 @@
 <style>
   :root{
     --bg: #000000;
-    --panel: rgba(20,10,18,0.92);
+    --panel: rgba(16,13,22,0.92);
     --panel-border: rgba(255,255,255,0.10);
-    --accent: #FF2E9F;
-    --accent-2: #FF7AC6;
-    --accent-dim: rgba(255,46,159,0.35);
+    --accent: #B084F5;
+    --accent-2: #7C4DFF;
+    --accent-dim: rgba(176,132,245,0.35);
     --text: #ffffff;
-    --muted: #d9a9c6;
+    --muted: #b8a9c9;
     --font: 'Poppins', sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -34,7 +34,7 @@
 
   .vignette{
     position:fixed;inset:0;
-    background: radial-gradient(ellipse at 50% 40%, rgba(255,46,159,0.14), transparent 60%);
+    background: radial-gradient(ellipse at 50% 40%, rgba(124,77,255,0.14), transparent 60%);
     pointer-events:none;
     animation: vignettePulse 3s ease-in-out infinite;
   }
@@ -68,13 +68,13 @@
     border-radius:50%;
     padding:3px;
     background: conic-gradient(from 180deg, #ffffff, var(--accent), #ffffff, var(--accent-2), #ffffff);
-    box-shadow: 0 0 30px rgba(255,46,159,0.45), 0 0 70px rgba(255,122,198,0.25);
+    box-shadow: 0 0 30px rgba(124,77,255,0.45), 0 0 70px rgba(176,132,245,0.25);
     margin-bottom:20px;
     animation: pulseGlow 1.6s ease-in-out infinite;
   }
   @keyframes pulseGlow{
-    0%,100%{ box-shadow: 0 0 30px rgba(255,46,159,0.45), 0 0 70px rgba(255,122,198,0.25); }
-    50%{ box-shadow: 0 0 45px rgba(255,46,159,0.75), 0 0 100px rgba(255,122,198,0.45); }
+    0%,100%{ box-shadow: 0 0 30px rgba(124,77,255,0.45), 0 0 70px rgba(176,132,245,0.25); }
+    50%{ box-shadow: 0 0 45px rgba(124,77,255,0.75), 0 0 100px rgba(176,132,245,0.45); }
   }
   .avatar{
     width:100%;height:100%;
@@ -109,13 +109,13 @@
   }
   .discord-btn:hover{
     border-color:var(--accent);
-    box-shadow:0 0 18px rgba(255,46,159,0.35);
+    box-shadow:0 0 18px rgba(124,77,255,0.35);
     transform:translateY(-1px) scale(1.03);
   }
   .discord-btn.copied{
     border-color:var(--accent);
     color:var(--accent);
-    box-shadow:0 0 18px rgba(255,46,159,0.45);
+    box-shadow:0 0 18px rgba(124,77,255,0.45);
   }
   .discord-btn svg{width:16px;height:16px;flex-shrink:0;}
   .discord-btn svg path{ fill:var(--accent); }
@@ -137,7 +137,7 @@
   .tab-btn.active{
     border-color:var(--accent);
     color:var(--accent);
-    box-shadow:0 0 18px rgba(255,46,159,0.4);
+    box-shadow:0 0 18px rgba(124,77,255,0.4);
   }
 
   .panel{
@@ -146,7 +146,7 @@
     background: var(--panel);
     border:1px solid var(--panel-border);
     border-radius:14px;
-    box-shadow: 0 12px 32px rgba(255,46,159,0.15);
+    box-shadow: 0 12px 32px rgba(124,77,255,0.15);
     overflow:hidden;
     max-height:0;
     opacity:0;
@@ -195,7 +195,7 @@
   .invite-list a:hover{
     border-color:var(--accent);
     color:var(--accent);
-    background:rgba(255,46,159,0.1);
+    background:rgba(124,77,255,0.1);
   }
   .invite-list a .arrow{opacity:0.5;transition:transform .2s;}
   .invite-list a:hover .arrow{transform:translateX(2px);opacity:1;}
@@ -204,7 +204,7 @@
     position:fixed;bottom:14px;left:0;right:0;
     text-align:center;
     font-size:11px;
-    color:#7a4b63;
+    color:#5c4a73;
     letter-spacing:0.02em;
     z-index:2;
   }
@@ -337,6 +337,9 @@
   });
 
   // ============ MUSIC (background, no visible control) ============
+  // Browsers block autoplay WITH sound, no way around that. Standard
+  // workaround: autoplay muted on load, unmute on first user interaction
+  // anywhere on the page (click/tap/keypress).
   const bgm = document.getElementById('bgm');
   let unmutedYet = false;
 
@@ -356,7 +359,11 @@
   window.addEventListener('keydown', unmuteOnFirstInteraction);
   window.addEventListener('touchstart', unmuteOnFirstInteraction);
 
-  // ============ SWEEP TEXT ANIMATOR (pink/white, no bounce) ============
+  // ============ SWEEP TEXT ANIMATOR ============
+  // Ported from the Unity C# SweepTextAnimator: for each character, lerp
+  // between colorA (purple) and colorB (white) based on a moving offset
+  // so a "wave" of color sweeps across the text on a loop. No bounce/
+  // rotate/scale — color + glow only, per the "don't want it bouncing" note.
   const sweepTitle = document.getElementById('sweepTitle');
   const sweepContent = sweepTitle.textContent;
   sweepTitle.innerHTML = '';
@@ -368,10 +375,10 @@
     return span;
   });
 
-  const SWEEP_DURATION = 1.1;
-  const SWEEP_SPEED = 2.2;
-  const COLOR_A = [255, 20, 147];   // hot pink
-  const COLOR_B = [255, 255, 255];  // white
+  const SWEEP_DURATION = 1.1;   // seconds
+  const SWEEP_SPEED = 0.7;      // was 2.2 — slowed down
+  const COLOR_A = [141, 92, 255];   // purple, matches colorA (0.553, 0.361, 1.0)
+  const COLOR_B = [255, 255, 255];  // white, matches colorB
 
   function lerp(a, b, t){ return a + (b - a) * t; }
   function repeat(t, length){ return t - Math.floor(t / length) * length; }
@@ -404,7 +411,7 @@
     requestAnimationFrame(sweepTick);
   }
 
-  // ============ pink/white particles ============
+  // ============ purple/white drifting particles ============
   const canvas = document.getElementById('fx');
   const ctx = canvas.getContext('2d');
   let w, h, particles;
@@ -421,7 +428,7 @@
       vy: Math.random()*0.5 + 0.15,
       vx: (Math.random()-0.5) * 0.6,
       o: Math.random()*0.6 + 0.2,
-      pink: Math.random() > 0.4
+      purple: Math.random() > 0.4
     }));
   }
   let fxTime = 0;
@@ -429,7 +436,7 @@
     fxTime += 0.02;
     ctx.clearRect(0,0,w,h);
     for(const p of particles){
-      ctx.fillStyle = p.pink ? '#FF66C4' : '#FFFFFF';
+      ctx.fillStyle = p.purple ? '#B084F5' : '#FFFFFF';
       ctx.globalAlpha = p.o * (0.6 + Math.sin(fxTime * 3 + p.x) * 0.4);
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
