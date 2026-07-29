@@ -33,8 +33,6 @@
   }
 
   /* ============ BACKGROUND MEDIA LAYER ============ */
-  /* Sits behind everything else. Fill in BACKGROUND config near the
-     bottom of the script to use an image or video. */
   #bgMediaWrap{
     position:fixed;
     inset:0;
@@ -51,7 +49,6 @@
     object-fit:cover;
     object-position:center;
   }
-  /* dark overlay so text/panels stay readable on top of any media */
   #bgMediaWrap::after{
     content:"";
     position:absolute;
@@ -228,6 +225,20 @@
   .invite-list a .arrow{opacity:0.5;transition:transform .2s;}
   .invite-list a:hover .arrow{transform:translateX(2px);opacity:1;}
 
+  /* ============ VIEW COUNTER ============ */
+  .view-counter{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:14px;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:0.02em;
+    opacity:0.85;
+  }
+  .view-counter svg{width:13px;height:13px;flex-shrink:0;}
+  .view-counter svg path{ fill:var(--muted); }
+
   footer{
     position:fixed;bottom:14px;left:0;right:0;
     text-align:center;
@@ -247,7 +258,6 @@
 <body>
 
 <!-- ============ BACKGROUND MEDIA (image or video) ============ -->
-<!-- Configure this in the BACKGROUND object near the bottom of the script -->
 <div id="bgMediaWrap"></div>
 
 <div class="vignette"></div>
@@ -298,11 +308,16 @@
   </div>
 
   <!-- ============ DISCORD INVITES ============ -->
-  <!-- Edit the INVITES array in the script below to add/remove servers -->
   <div class="panel" id="panel-invites">
     <div class="panel-inner">
       <ul class="invite-list" id="inviteList"></ul>
     </div>
+  </div>
+
+  <!-- ============ VIEW COUNTER ============ -->
+  <div class="view-counter">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9ZM12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg>
+    <span id="viewCount">…</span> views
   </div>
 </div>
 
@@ -311,11 +326,6 @@
 <script>
   // ============================================================
   // BACKGROUND MEDIA CONFIG
-  // Set type to 'image' or 'video' and paste your link in url.
-  // Leave type as 'none' to keep the plain black background.
-  //   - image: any direct image link (.jpg/.png/.webp/.gif)
-  //   - video: any direct video link (.mp4/.webm) — it will
-  //            autoplay muted, loop, and cover the whole page
   // ============================================================
   const BACKGROUND = {
     type: 'video',
@@ -339,6 +349,29 @@
       wrap.appendChild(vid);
       vid.play().catch(() => {});
     }
+  })();
+
+  // ============================================================
+  // VIEW COUNTER
+  // Uses a free, no-signup counting API (countapi.xyz's spiritual
+  // successor, since the original shut down). Every visitor who
+  // loads the page increments this one shared number.
+  //
+  // IMPORTANT: this key is public and global — anyone who knows it
+  // can bump your count or read it. Keep it unique to this page so
+  // it doesn't collide with someone else's counter.
+  // ============================================================
+  (function viewCounter(){
+    const COUNTER_KEY = 'unity-cpu-bio-unity-2026'; // change to reset, keep it unique
+    const el = document.getElementById('viewCount');
+    fetch(`https://countapi.mileshilliard.com/api/v1/hit/${COUNTER_KEY}`)
+      .then(res => res.json())
+      .then(data => {
+        if (el) el.textContent = data.value.toLocaleString();
+      })
+      .catch(() => {
+        if (el) el.textContent = '—';
+      });
   })();
 
   // ============ CONFIG: discord invites ============
@@ -402,9 +435,6 @@
   });
 
   // ============ MUSIC (background, no visible control) ============
-  // Browsers block autoplay WITH sound, no way around that. Standard
-  // workaround: autoplay muted on load, unmute on first user interaction
-  // anywhere on the page (click/tap/keypress).
   const bgm = document.getElementById('bgm');
   let unmutedYet = false;
 
@@ -425,10 +455,6 @@
   window.addEventListener('touchstart', unmuteOnFirstInteraction);
 
   // ============ SWEEP TEXT ANIMATOR ============
-  // Ported from the Unity C# SweepTextAnimator: for each character, lerp
-  // between colorA (purple) and colorB (white) based on a moving offset
-  // so a "wave" of color sweeps across the text on a loop. No bounce/
-  // rotate/scale — color + glow only, per the "don't want it bouncing" note.
   const sweepTitle = document.getElementById('sweepTitle');
   const sweepContent = sweepTitle.textContent;
   sweepTitle.innerHTML = '';
@@ -440,10 +466,10 @@
     return span;
   });
 
-  const SWEEP_DURATION = 1.1;   // seconds
-  const SWEEP_SPEED = 0.7;      // was 2.2 — slowed down
-  const COLOR_A = [141, 92, 255];   // purple, matches colorA (0.553, 0.361, 1.0)
-  const COLOR_B = [255, 255, 255];  // white, matches colorB
+  const SWEEP_DURATION = 1.1;
+  const SWEEP_SPEED = 0.7;
+  const COLOR_A = [141, 92, 255];
+  const COLOR_B = [255, 255, 255];
 
   function lerp(a, b, t){ return a + (b - a) * t; }
   function repeat(t, length){ return t - Math.floor(t / length) * length; }
