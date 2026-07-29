@@ -225,12 +225,18 @@
   .invite-list a .arrow{opacity:0.5;transition:transform .2s;}
   .invite-list a:hover .arrow{transform:translateX(2px);opacity:1;}
 
-  /* ============ VIEW COUNTER ============ */
+  /* ============ VIEW COUNTER + LIKE BUTTON ============ */
+  .meta-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    margin-top:14px;
+  }
   .view-counter{
     display:flex;
     align-items:center;
     gap:6px;
-    margin-top:14px;
     font-size:12px;
     color:var(--muted);
     letter-spacing:0.02em;
@@ -238,6 +244,40 @@
   }
   .view-counter svg{width:13px;height:13px;flex-shrink:0;}
   .view-counter svg path{ fill:var(--muted); }
+
+  .like-btn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-family:var(--font);
+    font-size:12px;
+    letter-spacing:0.02em;
+    cursor:pointer;
+    padding:2px 4px;
+    opacity:0.85;
+    transition: color .2s, opacity .2s, transform .1s;
+  }
+  .like-btn:hover{ opacity:1; color:var(--accent); transform:scale(1.05); }
+  .like-btn svg{width:15px;height:15px;flex-shrink:0;transition: fill .2s, stroke .2s;}
+  .like-btn svg path{
+    fill:none;
+    stroke:var(--muted);
+    stroke-width:1.6;
+    transition: fill .2s, stroke .2s;
+  }
+  .like-btn:hover svg path{ stroke:var(--accent); }
+  .like-btn.liked{ color:var(--accent); cursor:default; opacity:1; }
+  .like-btn.liked svg path{ fill:var(--accent); stroke:var(--accent); }
+  .like-btn.liked:hover{ transform:none; }
+  .like-btn.pulse svg{ animation: likePulse .35s ease; }
+  @keyframes likePulse{
+    0%{ transform:scale(1); }
+    40%{ transform:scale(1.3); }
+    100%{ transform:scale(1); }
+  }
 
   footer{
     position:fixed;bottom:14px;left:0;right:0;
@@ -252,6 +292,7 @@
     .card{animation:none;}
     .avatar-wrap{animation:none;}
     .vignette{animation:none;}
+    .like-btn.pulse svg{animation:none;}
   }
 </style>
 </head>
@@ -314,10 +355,16 @@
     </div>
   </div>
 
-  <!-- ============ VIEW COUNTER ============ -->
-  <div class="view-counter">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9ZM12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg>
-    <span id="viewCount">…</span> views
+  <!-- ============ VIEW COUNTER + LIKE BUTTON ============ -->
+  <div class="meta-row">
+    <div class="view-counter">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9ZM12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg>
+      <span id="viewCount">…</span> views
+    </div>
+    <button class="like-btn" id="likeBtn" type="button">
+      <svg viewBox="0 0 24 24"><path d="M12 20.5s-7-4.35-9.5-8.8C.8 8.6 2 5 5.3 4.2 7.6 3.6 9.8 4.7 12 7.5c2.2-2.8 4.4-3.9 6.7-3.3C22 5 23.2 8.6 21.5 11.7 19 16.15 12 20.5 12 20.5Z"/></svg>
+      <span id="likeCount">…</span>
+    </button>
   </div>
 </div>
 
@@ -353,25 +400,58 @@
 
   // ============================================================
   // VIEW COUNTER
-  // Uses a free, no-signup counting API (countapi.xyz's spiritual
-  // successor, since the original shut down). Every visitor who
-  // loads the page increments this one shared number.
-  //
-  // IMPORTANT: this key is public and global — anyone who knows it
-  // can bump your count or read it. Keep it unique to this page so
-  // it doesn't collide with someone else's counter.
+  // Free, no-signup counting API (successor to the old countapi.xyz).
+  // Every visitor who loads the page increments this shared number.
+  // Keys are public — anyone who knows the key can bump/read it.
   // ============================================================
   (function viewCounter(){
     const COUNTER_KEY = 'unity-cpu-bio-unity-2026'; // change to reset, keep it unique
     const el = document.getElementById('viewCount');
     fetch(`https://countapi.mileshilliard.com/api/v1/hit/${COUNTER_KEY}`)
       .then(res => res.json())
-      .then(data => {
-        if (el) el.textContent = data.value.toLocaleString();
-      })
-      .catch(() => {
-        if (el) el.textContent = '—';
-      });
+      .then(data => { if (el) el.textContent = Number(data.value).toLocaleString(); })
+      .catch(() => { if (el) el.textContent = '—'; });
+  })();
+
+  // ============================================================
+  // LIKE BUTTON
+  // Same free counting API, but only increments on click, and only
+  // once per browser (tracked with localStorage so people can't
+  // spam it by clicking repeatedly). On load we just READ the
+  // current count with /get so opening the page doesn't count as
+  // a like.
+  // ============================================================
+  (function likeButton(){
+    const LIKE_KEY = 'unity-cpu-bio-unity-2026-likes'; // change to reset, keep it unique
+    const STORAGE_FLAG = 'liked_' + LIKE_KEY;
+    const btn = document.getElementById('likeBtn');
+    const countEl = document.getElementById('likeCount');
+    if (!btn || !countEl) return;
+
+    function render(value, liked){
+      countEl.textContent = Number(value || 0).toLocaleString();
+      btn.classList.toggle('liked', !!liked);
+    }
+
+    const alreadyLiked = localStorage.getItem(STORAGE_FLAG) === '1';
+
+    fetch(`https://countapi.mileshilliard.com/api/v1/get/${LIKE_KEY}`)
+      .then(res => res.json())
+      .then(data => render(data.value, alreadyLiked))
+      .catch(() => render(0, alreadyLiked));
+
+    btn.addEventListener('click', () => {
+      if (localStorage.getItem(STORAGE_FLAG) === '1') return; // one like per browser
+      fetch(`https://countapi.mileshilliard.com/api/v1/hit/${LIKE_KEY}`)
+        .then(res => res.json())
+        .then(data => {
+          localStorage.setItem(STORAGE_FLAG, '1');
+          render(data.value, true);
+          btn.classList.add('pulse');
+          setTimeout(() => btn.classList.remove('pulse'), 350);
+        })
+        .catch(() => {});
+    });
   })();
 
   // ============ CONFIG: discord invites ============
