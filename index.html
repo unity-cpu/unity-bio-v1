@@ -88,6 +88,7 @@
   }
 
   .avatar-wrap{
+    position:relative;
     width:116px;height:116px;
     border-radius:50%;
     padding:3px;
@@ -107,6 +108,53 @@
   display:block;
   background:#111;
 }
+
+/* discord status dot */
+.status-dot{
+  position:absolute;
+  bottom:4px;
+  right:4px;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:#747f8d; /* offline default */
+  border:3px solid #0a0710;
+  box-shadow:0 0 8px rgba(0,0,0,0.6);
+  transition: background .3s ease;
+  z-index:3;
+}
+.status-dot.online{ background:#3ba55c; }
+.status-dot.idle{
+  background:#0a0710;
+  box-shadow:0 0 0 3px #faa81a inset, 0 0 8px rgba(0,0,0,0.6);
+}
+.status-dot.dnd{
+  background:#0a0710;
+  box-shadow:0 0 0 3px #ed4245 inset, 0 0 8px rgba(0,0,0,0.6);
+}
+.status-dot.offline{ background:#747f8d; }
+.status-dot.online{ box-shadow:0 0 10px rgba(59,165,92,0.7); }
+
+.status-label{
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:0.02em;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin-top:-12px;
+  margin-bottom:16px;
+}
+.status-label .dot-sm{
+  width:8px;height:8px;border-radius:50%;
+  background:#747f8d;
+  flex-shrink:0;
+}
+.status-label .dot-sm.online{ background:#3ba55c; }
+.status-label .dot-sm.idle{ background:#faa81a; }
+.status-label .dot-sm.dnd{ background:#ed4245; }
+.status-label .dot-sm.offline{ background:#747f8d; }
 
 h1{
   font-size:28px;
@@ -343,6 +391,12 @@ h1{ margin-bottom:20px; }
 <div class="card">
   <div class="avatar-wrap">
     <img class="avatar" src="https://raw.githubusercontent.com/unity-cpu/gaybez-is-gay/main/6c165774d4caecf2d4dee981812f15c7.png" alt="avatar">
+    <div class="status-dot offline" id="statusDot"></div>
+  </div>
+
+  <div class="status-label" id="statusLabel">
+    <span class="dot-sm offline" id="statusDotSm"></span>
+    <span id="statusText">loading…</span>
   </div>
 
   <h1 id="sweepTitle">Unity!</h1>
@@ -432,6 +486,68 @@ h1{ margin-bottom:20px; }
       wrap.appendChild(vid);
       vid.play().catch(() => {});
     }
+  })();
+
+  // ============ Discord live status (Lanyard) ============
+  (function discordStatus(){
+    const DISCORD_ID = '1443807588864098316';
+    const dot = document.getElementById('statusDot');
+    const dotSm = document.getElementById('statusDotSm');
+    const label = document.getElementById('statusText');
+
+    const STATUS_TEXT = {
+      online: 'online',
+      idle: 'idle',
+      dnd: 'do not disturb',
+      offline: 'offline'
+    };
+
+    function applyStatus(status){
+      const s = STATUS_TEXT[status] ? status : 'offline';
+      dot.className = 'status-dot ' + s;
+      dotSm.className = 'dot-sm ' + s;
+      label.textContent = STATUS_TEXT[s];
+    }
+
+    function fetchStatus(){
+      fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`)
+        .then(res => res.json())
+        .then(json => {
+          if (json && json.success && json.data) {
+            applyStatus(json.data.discord_status);
+          } else {
+            label.textContent = 'unavailable';
+          }
+        })
+        .catch(() => { label.textContent = 'unavailable'; });
+    }
+
+    fetchStatus();
+    setInterval(fetchStatus, 20000);
+
+    // live updates via websocket, falls back to polling above if it fails
+    try {
+      const ws = new WebSocket('wss://api.lanyard.rest/socket');
+      let heartbeatInterval;
+      ws.onmessage = (evt) => {
+        const msg = JSON.parse(evt.data);
+        if (msg.op === 1 && msg.d && msg.d.heartbeat_interval) {
+          heartbeatInterval = setInterval(() => {
+            ws.send(JSON.stringify({ op: 3 }));
+          }, msg.d.heartbeat_interval);
+          ws.send(JSON.stringify({
+            op: 2,
+            d: { subscribe_to_id: DISCORD_ID }
+          }));
+        }
+        if (msg.t === 'INIT_STATE' || msg.t === 'PRESENCE_UPDATE') {
+          const data = msg.t === 'INIT_STATE' ? msg.d : msg.d;
+          if (data && data.discord_status) applyStatus(data.discord_status);
+        }
+      };
+      ws.onclose = () => { if (heartbeatInterval) clearInterval(heartbeatInterval); };
+      ws.onerror = () => {};
+    } catch (e) { /* websocket unsupported, polling still covers it */ }
   })();
 
   (function viewCounter(){
