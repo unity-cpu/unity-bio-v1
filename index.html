@@ -414,6 +414,17 @@ h1{ margin-bottom:20px; }
     margin-bottom:16px;
     opacity:0.85;
     min-height:14px;
+    line-height:1.5;
+    max-width:260px;
+  }
+  .activity-text .activity-detail{
+    display:block;
+    font-size:10.5px;
+    color:var(--muted);
+    opacity:0.75;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
 
   /* spotify now playing */
@@ -683,13 +694,20 @@ h1{ margin-bottom:20px; }
       label.textContent = STATUS_TEXT[s];
     }
 
+    function esc(s){
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
     function applyActivity(activities){
       const act = (activities || []).find(a => a.type !== 4); // skip custom status (type 4)
       if (act) {
         const verb = ACTIVITY_VERB[act.type] || 'Playing';
-        activityText.textContent = `${verb} ${act.name}`;
+        const extra = [act.details, act.state].filter(Boolean).join(' • ');
+        activityText.innerHTML = `${esc(verb + ' ' + act.name)}` + (extra ? `<span class="activity-detail">${esc(extra)}</span>` : '');
       } else {
-        activityText.textContent = '';
+        activityText.innerHTML = '';
       }
     }
 
