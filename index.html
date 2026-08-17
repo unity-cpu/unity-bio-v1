@@ -32,7 +32,6 @@
     position:relative;
   }
 
-  /* ============ BACKGROUND MEDIA LAYER ============ */
   #bgMediaWrap{
     position:fixed;
     inset:0;
@@ -180,14 +179,14 @@ h1{ margin-bottom:20px; }
   transition: max-height .35s ease, opacity .3s ease, transform .3s ease, margin-top .35s ease;
 }
 .panel.open{
-  max-height:420px;          /* increased so all names fit */
+  max-height:420px;
   opacity:1;
   transform:translateY(0);
 }
 
 .panel-inner{
   padding:16px 14px;
-  max-height:380px;          /* allows scrolling if list grows */
+  max-height:380px;
   overflow-y:auto;
 }
 
@@ -235,7 +234,6 @@ h1{ margin-bottom:20px; }
   50%,100%{opacity:0;}
 }
 
-  /* invite / social list */
   .invite-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
   .invite-list a{
     display:flex;align-items:center;justify-content:space-between;
@@ -260,7 +258,6 @@ h1{ margin-bottom:20px; }
   .invite-list a .arrow{opacity:0.5;transition:transform .2s;}
   .invite-list a:hover .arrow{transform:translateX(2px);opacity:1;}
 
-  /* ============ VIEW COUNTER + LIKE BUTTON ============ */
   .meta-row{
     display:flex;
     align-items:center;
@@ -334,13 +331,11 @@ h1{ margin-bottom:20px; }
 </head>
 <body>
 
-<!-- ============ BACKGROUND MEDIA (image or video) ============ -->
 <div id="bgMediaWrap"></div>
 
 <div class="vignette"></div>
 <canvas id="fx"></canvas>
 
-<!-- ============ MUSIC (plays silently in background, no visible icon/button) ============ -->
 <audio id="bgm" loop preload="none">
   <source src="https://raw.githubusercontent.com/unity-cpu/gaybez-is-gay/main/0817(1).MP3" type="audio/mpeg">
 </audio>
@@ -387,21 +382,18 @@ h1{ margin-bottom:20px; }
     </div>
   </div>
 
-  <!-- ============ DISCORD INVITES ============ -->
   <div class="panel" id="panel-invites">
     <div class="panel-inner">
       <ul class="invite-list" id="inviteList"></ul>
     </div>
   </div>
 
-  <!-- ============ SOCIALS ============ -->
   <div class="panel" id="panel-socials">
     <div class="panel-inner">
       <ul class="invite-list" id="socialList"></ul>
     </div>
   </div>
 
-  <!-- ============ VIEW COUNTER + LIKE BUTTON ============ -->
   <div class="meta-row">
     <div class="view-counter">
       <svg viewBox="0 0 24 24" fill="none"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9ZM12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg>
@@ -417,9 +409,7 @@ h1{ margin-bottom:20px; }
 <footer>unity.lolz</footer>
 
 <script>
-  // ============================================================
-  // BACKGROUND MEDIA CONFIG
-  // ============================================================
+
   const BACKGROUND = {
     type: 'video',
     url: 'https://raw.githubusercontent.com/unity-cpu/gaybez-is-gay/main/ssstik.io_%40d3prxssd3_1786150663023.mp4'
@@ -444,9 +434,6 @@ h1{ margin-bottom:20px; }
     }
   })();
 
-  // ============================================================
-  // VIEW COUNTER
-  // ============================================================
   (function viewCounter(){
     const COUNTER_KEY = 'unity-cpu-bio-unity-2026';
     const el = document.getElementById('viewCount');
@@ -456,9 +443,6 @@ h1{ margin-bottom:20px; }
       .catch(() => { if (el) el.textContent = '—'; });
   })();
 
-  // ============================================================
-  // LIKE BUTTON
-  // ============================================================
   (function likeButton(){
     const LIKE_KEY = 'unity-cpu-bio-unity-2026-likes';
     const STORAGE_FLAG = 'liked_' + LIKE_KEY;
@@ -492,7 +476,6 @@ h1{ margin-bottom:20px; }
     });
   })();
 
-  // ============ CONFIG: discord invites ============
   const INVITES = [
     { label: "apk studio", url: "https://discord.gg/J2ezjghdBN" },
     { label: "Modlab", url: "https://discord.gg/SM9EhM4mNX" },
@@ -545,7 +528,7 @@ h1{ margin-bottom:20px; }
     socialList.appendChild(li);
   });
 
-  // discord copy-to-clipboard
+
   const discordBtn = document.getElementById('discordBtn');
   const discordLabel = document.getElementById('discordLabel');
   const discordTag = 'unity_da_modda';
@@ -559,7 +542,7 @@ h1{ margin-bottom:20px; }
     }, 1500);
   });
 
-  // tab toggle (accordion, only one open at a time)
+
   const tabs = document.querySelectorAll('.tab-btn');
   const panels = {
     frens: document.getElementById('panel-frens'),
@@ -586,7 +569,6 @@ h1{ margin-bottom:20px; }
     });
   });
 
-  // ============ MUSIC (background, no visible control) ============
   const bgm = document.getElementById('bgm');
   let unmutedYet = false;
 
@@ -606,7 +588,6 @@ h1{ margin-bottom:20px; }
   window.addEventListener('keydown', unmuteOnFirstInteraction);
   window.addEventListener('touchstart', unmuteOnFirstInteraction);
 
-  // ============ SWEEP TEXT ANIMATOR ============
   const sweepTitle = document.getElementById('sweepTitle');
   const sweepContent = sweepTitle.textContent;
   sweepTitle.innerHTML = '';
@@ -654,14 +635,11 @@ h1{ margin-bottom:20px; }
     requestAnimationFrame(sweepTick);
   }
 
-  // ============ ABOUT ME TYPING ANIMATION ============
-  // Types out each <p data-full="..."> line in #aboutText, one at a time,
-  // whenever the "about me" tab is opened. Re-types fresh every time it's opened.
   (function aboutTyping(){
     const container = document.getElementById('aboutText');
     if (!container) return;
     const paragraphs = [...container.querySelectorAll('p[data-full]')];
-    const CHAR_SPEED = 28;       // ms per character
+    const CHAR_SPEED = 15;       // ms per character
     const LINE_GAP = 250;        // ms pause between lines
     let typing = false;
 
@@ -719,7 +697,6 @@ h1{ margin-bottom:20px; }
     }
   })();
 
-  // ============ purple/white drifting particles ============
   const canvas = document.getElementById('fx');
   const ctx = canvas.getContext('2d');
   let w, h, particles;
