@@ -405,28 +405,6 @@ h1{ margin-bottom:20px; }
     opacity:0.5;
   }
 
-  /* discord activity text */
-  .activity-text{
-    font-size:11.5px;
-    color:var(--muted);
-    letter-spacing:0.01em;
-    margin-top:-12px;
-    margin-bottom:16px;
-    opacity:0.85;
-    min-height:14px;
-    line-height:1.5;
-    max-width:260px;
-  }
-  .activity-text .activity-detail{
-    display:block;
-    font-size:10.5px;
-    color:var(--muted);
-    opacity:0.75;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
   /* spotify now playing */
   .spotify-card{
     display:none;
@@ -553,7 +531,6 @@ h1{ margin-bottom:20px; }
     <span class="dot-sm offline" id="statusDotSm"></span>
     <span id="statusText">loading…</span>
   </div>
-  <div class="activity-text" id="activityText"></div>
 
   <h1 id="sweepTitle">Unity!</h1>
   <div id="typeSubtitle"><span id="typeText"></span><span class="cursor"></span></div>
@@ -665,7 +642,6 @@ h1{ margin-bottom:20px; }
     const dot = document.getElementById('statusDot');
     const dotSm = document.getElementById('statusDotSm');
     const label = document.getElementById('statusText');
-    const activityText = document.getElementById('activityText');
     const spotifyCard = document.getElementById('spotifyCard');
     const spotifyArt = document.getElementById('spotifyArt');
     const spotifySong = document.getElementById('spotifySong');
@@ -678,15 +654,6 @@ h1{ margin-bottom:20px; }
       offline: 'offline'
     };
 
-    // Discord activity type: 0 Playing, 1 Streaming, 2 Listening, 3 Watching, 5 Competing
-    const ACTIVITY_VERB = {
-      0: 'Playing',
-      1: 'Streaming',
-      2: 'Listening to',
-      3: 'Watching',
-      5: 'Competing in'
-    };
-
     function applyStatus(status){
       const s = STATUS_TEXT[status] ? status : 'offline';
       dot.className = 'status-dot ' + s;
@@ -694,22 +661,6 @@ h1{ margin-bottom:20px; }
       label.textContent = STATUS_TEXT[s];
     }
 
-    function esc(s){
-      const d = document.createElement('div');
-      d.textContent = s;
-      return d.innerHTML;
-    }
-
-    function applyActivity(activities){
-      const act = (activities || []).find(a => a.type !== 4); // skip custom status (type 4)
-      if (act) {
-        const verb = ACTIVITY_VERB[act.type] || 'Playing';
-        const extra = [act.details, act.state].filter(Boolean).join(' • ');
-        activityText.innerHTML = `${esc(verb + ' ' + act.name)}` + (extra ? `<span class="activity-detail">${esc(extra)}</span>` : '');
-      } else {
-        activityText.innerHTML = '';
-      }
-    }
 
     function applySpotify(spotify){
       if (spotify) {
@@ -726,7 +677,6 @@ h1{ margin-bottom:20px; }
     function applyAll(data){
       if (!data) return;
       applyStatus(data.discord_status);
-      applyActivity(data.activities);
       applySpotify(data.listening_to_spotify ? data.spotify : null);
     }
 
