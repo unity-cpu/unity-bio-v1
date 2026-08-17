@@ -32,6 +32,7 @@
     position:relative;
   }
 
+  /* ============ BACKGROUND MEDIA LAYER ============ */
   #bgMediaWrap{
     position:fixed;
     inset:0;
@@ -100,139 +101,141 @@
     0%,100%{ box-shadow: 0 0 30px rgba(124,77,255,0.45), 0 0 70px rgba(176,132,245,0.25); }
     50%{ box-shadow: 0 0 45px rgba(124,77,255,0.75), 0 0 100px rgba(176,132,245,0.45); }
   }
-  .avatar{
-    width:100%;height:100%;
-    border-radius:50%;
-    object-fit:cover;
-    display:block;
-    background:#111;
-  }
+.avatar{
+  width:100%;height:100%;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  background:#111;
+}
 
-  h1{
-    font-size:28px;
-    font-weight:700;
-    letter-spacing:0.005em;
-    margin-bottom:6px;
-    white-space:pre;
-  }
-  h1 span{ transition:none; }
-  h1{ margin-bottom:20px; }
+h1{
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:0.005em;
+  margin-bottom:6px;
+  white-space:pre;
+}
+h1 span{ transition:none; }
+h1{ margin-bottom:20px; }
 
-  .discord-btn{
-    display:flex;align-items:center;gap:8px;
-    background: var(--panel);
-    border:1px solid var(--panel-border);
-    color:var(--text);
-    font-family:var(--font);
-    font-size:14px;
-    font-weight:500;
-    padding:9px 18px;
-    border-radius:10px;
-    cursor:pointer;
-    margin-bottom:12px;
-    transition: border-color .2s, box-shadow .2s, transform .15s;
-  }
-  .discord-btn:hover{
-    border-color:var(--accent);
-    box-shadow:0 0 18px rgba(124,77,255,0.35);
-    transform:translateY(-1px) scale(1.03);
-  }
-  .discord-btn.copied{
-    border-color:var(--accent);
-    color:var(--accent);
-    box-shadow:0 0 18px rgba(124,77,255,0.45);
-  }
-  .discord-btn svg{width:16px;height:16px;flex-shrink:0;}
-  .discord-btn svg path{ fill:var(--accent); }
+.discord-btn{
+  display:flex;align-items:center;gap:8px;
+  background: var(--panel);
+  border:1px solid var(--panel-border);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:14px;
+  font-weight:500;
+  padding:9px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  margin-bottom:12px;
+  transition: border-color .2s, box-shadow .2s, transform .15s;
+}
+.discord-btn:hover{
+  border-color:var(--accent);
+  box-shadow:0 0 18px rgba(124,77,255,0.35);
+  transform:translateY(-1px) scale(1.03);
+}
+.discord-btn.copied{
+  border-color:var(--accent);
+  color:var(--accent);
+  box-shadow:0 0 18px rgba(124,77,255,0.45);
+}
+.discord-btn svg{width:16px;height:16px;flex-shrink:0;}
+.discord-btn svg path{ fill:var(--accent); }
 
-  .row{display:flex;gap:10px;margin-bottom:0;flex-wrap:wrap;justify-content:center;}
-  .tab-btn{
-    background: var(--panel);
-    border:1px solid var(--panel-border);
-    color:var(--text);
-    font-family:var(--font);
-    font-size:13.5px;
-    font-weight:500;
-    padding:9px 20px;
-    border-radius:10px;
-    cursor:pointer;
-    transition: border-color .2s, box-shadow .2s, color .2s;
-  }
-  .tab-btn:hover{border-color:var(--accent-dim);}
-  .tab-btn.active{
-    border-color:var(--accent);
-    color:var(--accent);
-    box-shadow:0 0 18px rgba(124,77,255,0.4);
-  }
+.row{display:flex;gap:10px;margin-bottom:0;flex-wrap:wrap;justify-content:center;}
+.tab-btn{
+  background: var(--panel);
+  border:1px solid var(--panel-border);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:13.5px;
+  font-weight:500;
+  padding:9px 20px;
+  border-radius:10px;
+  cursor:pointer;
+  transition: border-color .2s, box-shadow .2s, color .2s;
+}
+.tab-btn:hover{border-color:var(--accent-dim);}
+.tab-btn.active{
+  border-color:var(--accent);
+  color:var(--accent);
+  box-shadow:0 0 18px rgba(124,77,255,0.4);
+}
 
-  .panel{
-    width:240px;
-    margin-top:12px;
-    background: var(--panel);
-    border:1px solid var(--panel-border);
-    border-radius:14px;
-    box-shadow: 0 12px 32px rgba(124,77,255,0.15);
-    overflow:hidden;
-    max-height:0;
-    opacity:0;
-    transform:translateY(-6px);
-    transition: max-height .35s ease, opacity .3s ease, transform .3s ease, margin-top .35s ease;
-  }
-  .panel.open{
-    max-height:420px;
-    opacity:1;
-    transform:translateY(0);
-  }
+.panel{
+  width:240px;
+  margin-top:12px;
+  background: var(--panel);
+  border:1px solid var(--panel-border);
+  border-radius:14px;
+  box-shadow: 0 12px 32px rgba(124,77,255,0.15);
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  transform:translateY(-6px);
+  transition: max-height .35s ease, opacity .3s ease, transform .3s ease, margin-top .35s ease;
+}
+.panel.open{
+  max-height:420px;          /* increased so all names fit */
+  opacity:1;
+  transform:translateY(0);
+}
 
-  .panel-inner{
-    padding:16px 14px;
-    max-height:380px;
-    overflow-y:auto;
-  }
+.panel-inner{
+  padding:16px 14px;
+  max-height:380px;          /* allows scrolling if list grows */
+  overflow-y:auto;
+}
 
-  .panel-inner::-webkit-scrollbar{
-    width:5px;
-  }
-  .panel-inner::-webkit-scrollbar-track{
-    background:transparent;
-  }
-  .panel-inner::-webkit-scrollbar-thumb{
-    background:rgba(176,132,245,0.35);
-    border-radius:10px;
-  }
+/* nice thin scrollbar */
+.panel-inner::-webkit-scrollbar{
+  width:5px;
+}
+.panel-inner::-webkit-scrollbar-track{
+  background:transparent;
+}
+.panel-inner::-webkit-scrollbar-thumb{
+  background:rgba(176,132,245,0.35);
+  border-radius:10px;
+}
 
-  .frens-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
-  .frens-list li{
-    font-size:13.5px;color:var(--muted);
-    padding:6px 0;
-    border-bottom:1px solid rgba(255,255,255,0.07);
-    transition:color .2s;
-  }
-  .frens-list li:last-child{border-bottom:none;}
-  .frens-list li:hover{color:var(--accent);}
+.frens-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.frens-list li{
+  font-size:13.5px;color:var(--muted);
+  padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  transition:color .2s;
+}
+.frens-list li:last-child{border-bottom:none;}
+.frens-list li:hover{color:var(--accent);}
 
-  .about-text p{
-    font-size:13px;
-    color:var(--muted);
-    line-height:1.6;
-    margin-bottom:10px;
-  }
-  .about-text p:last-child{margin-bottom:0;}
-  .about-text b{color:var(--accent);}
-  .about-text .type-cursor{
-    display:inline-block;
-    width:2px;
-    height:12px;
-    background:var(--accent);
-    margin-left:2px;
-    vertical-align:-1px;
-    animation: blink 0.9s steps(1) infinite;
-  }
-  @keyframes blink{
-    0%,49%{opacity:1;}
-    50%,100%{opacity:0;}
-  }
+.about-text p{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+  margin-bottom:10px;
+}
+.about-text p:last-child{margin-bottom:0;}
+.about-text b{color:var(--accent);}
+.about-text .type-cursor{
+  display:inline-block;
+  width:2px;
+  height:12px;
+  background:var(--accent);
+  margin-left:2px;
+  vertical-align:-1px;
+  animation: blink 0.9s steps(1) infinite;
+}
+@keyframes blink{
+  0%,49%{opacity:1;}
+  50%,100%{opacity:0;}
+}
 
+  /* invite / social list */
   .invite-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
   .invite-list a{
     display:flex;align-items:center;justify-content:space-between;
@@ -257,6 +260,7 @@
   .invite-list a .arrow{opacity:0.5;transition:transform .2s;}
   .invite-list a:hover .arrow{transform:translateX(2px);opacity:1;}
 
+  /* ============ VIEW COUNTER + LIKE BUTTON ============ */
   .meta-row{
     display:flex;
     align-items:center;
@@ -330,10 +334,13 @@
 </head>
 <body>
 
+<!-- ============ BACKGROUND MEDIA (image or video) ============ -->
 <div id="bgMediaWrap"></div>
+
 <div class="vignette"></div>
 <canvas id="fx"></canvas>
 
+<!-- ============ MUSIC (plays silently in background, no visible icon/button) ============ -->
 <audio id="bgm" loop preload="none">
   <source src="https://raw.githubusercontent.com/unity-cpu/gaybez-is-gay/main/0817.MP3" type="audio/mpeg">
 </audio>
@@ -352,34 +359,23 @@
   </button>
 
   <div class="row">
-    <button class="tab-btn" data-tab="tuff">really tuff friends</button>
+    <button class="tab-btn" data-tab="tuff frens">really tuff friends</button>
     <button class="tab-btn" data-tab="frens">frens</button>
     <button class="tab-btn" data-tab="about">about me</button>
     <button class="tab-btn" data-tab="invites">servers</button>
     <button class="tab-btn" data-tab="socials">socials</button>
   </div>
 
-  <!-- NEW TAB -->
-  <div class="panel" id="panel-tuff">
-    <div class="panel-inner">
-      <ul class="frens-list">
-        <li>crazy</li>
-        <li>notagirl</li>
-        <li>makilah</li>
-      </ul>
-    </div>
-  </div>
-
   <div class="panel" id="panel-frens">
     <div class="panel-inner">
       <ul class="frens-list">
         <li>crazy</li>
-        <li>bunny he help me with gradient</li>
+        <li>notagirl</li>
+        <li>makilah</li>
+        <li>bunny</li>
         <li>ray</li>
         <li>sot</li>
         <li>frog</li>
-        <li>notagirl</li>
-        <li>makilah</li>
         <li>darkmatter</li>
       </ul>
     </div>
@@ -392,18 +388,21 @@
     </div>
   </div>
 
+  <!-- ============ DISCORD INVITES ============ -->
   <div class="panel" id="panel-invites">
     <div class="panel-inner">
       <ul class="invite-list" id="inviteList"></ul>
     </div>
   </div>
 
+  <!-- ============ SOCIALS ============ -->
   <div class="panel" id="panel-socials">
     <div class="panel-inner">
       <ul class="invite-list" id="socialList"></ul>
     </div>
   </div>
 
+  <!-- ============ VIEW COUNTER + LIKE BUTTON ============ -->
   <div class="meta-row">
     <div class="view-counter">
       <svg viewBox="0 0 24 24" fill="none"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9ZM12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg>
@@ -419,6 +418,9 @@
 <footer>unity.lolz</footer>
 
 <script>
+  // ============================================================
+  // BACKGROUND MEDIA CONFIG
+  // ============================================================
   const BACKGROUND = {
     type: 'video',
     url: 'https://raw.githubusercontent.com/unity-cpu/gaybez-is-gay/main/ssstik.io_%40d3prxssd3_1786150663023.mp4'
@@ -443,6 +445,9 @@
     }
   })();
 
+  // ============================================================
+  // VIEW COUNTER
+  // ============================================================
   (function viewCounter(){
     const COUNTER_KEY = 'unity-cpu-bio-unity-2026';
     const el = document.getElementById('viewCount');
@@ -452,6 +457,9 @@
       .catch(() => { if (el) el.textContent = '—'; });
   })();
 
+  // ============================================================
+  // LIKE BUTTON
+  // ============================================================
   (function likeButton(){
     const LIKE_KEY = 'unity-cpu-bio-unity-2026-likes';
     const STORAGE_FLAG = 'liked_' + LIKE_KEY;
@@ -485,6 +493,7 @@
     });
   })();
 
+  // ============ CONFIG: discord invites ============
   const INVITES = [
     { label: "apk studio", url: "https://discord.gg/J2ezjghdBN" },
     { label: "Modlab", url: "https://discord.gg/SM9EhM4mNX" },
@@ -503,8 +512,14 @@
     inviteList.appendChild(li);
   });
 
+  // ============ CONFIG: socials ============
+  // icon: 'github' | 'youtube' | 'twitter' | 'tiktok' | 'instagram' | 'twitch' | null
   const SOCIALS = [
+    //{ label: "GitHub", url: "https://github.com/unity-cpu", icon: "github" },
+    // { label: "YouTube", url: "https://youtube.com/@yourhandle", icon: "youtube" },
+    // { label: "Twitter / X", url: "https://x.com/yourhandle", icon: "twitter" },
     { label: "TikTok", url: "https://tiktok.com/@unitylolz", icon: "tiktok" },
+
   ];
 
   const SOCIAL_ICONS = {
@@ -531,6 +546,7 @@
     socialList.appendChild(li);
   });
 
+  // discord copy-to-clipboard
   const discordBtn = document.getElementById('discordBtn');
   const discordLabel = document.getElementById('discordLabel');
   const discordTag = 'unity_da_modda';
@@ -544,11 +560,10 @@
     }, 1500);
   });
 
-  // Tab system (updated with "tuff")
+  // tab toggle (accordion, only one open at a time)
   const tabs = document.querySelectorAll('.tab-btn');
   const panels = {
     frens: document.getElementById('panel-frens'),
-    tuff: document.getElementById('panel-tuff'),
     about: document.getElementById('panel-about'),
     invites: document.getElementById('panel-invites'),
     socials: document.getElementById('panel-socials')
@@ -572,6 +587,7 @@
     });
   });
 
+  // ============ MUSIC (background, no visible control) ============
   const bgm = document.getElementById('bgm');
   let unmutedYet = false;
 
@@ -591,6 +607,7 @@
   window.addEventListener('keydown', unmuteOnFirstInteraction);
   window.addEventListener('touchstart', unmuteOnFirstInteraction);
 
+  // ============ SWEEP TEXT ANIMATOR ============
   const sweepTitle = document.getElementById('sweepTitle');
   const sweepContent = sweepTitle.textContent;
   sweepTitle.innerHTML = '';
@@ -638,12 +655,15 @@
     requestAnimationFrame(sweepTick);
   }
 
+  // ============ ABOUT ME TYPING ANIMATION ============
+  // Types out each <p data-full="..."> line in #aboutText, one at a time,
+  // whenever the "about me" tab is opened. Re-types fresh every time it's opened.
   (function aboutTyping(){
     const container = document.getElementById('aboutText');
     if (!container) return;
     const paragraphs = [...container.querySelectorAll('p[data-full]')];
-    const CHAR_SPEED = 28;
-    const LINE_GAP = 250;
+    const CHAR_SPEED = 28;       // ms per character
+    const LINE_GAP = 250;        // ms pause between lines
     let typing = false;
 
     function resetParagraphs(){
@@ -694,11 +714,13 @@
         p.textContent = full;
       });
     } else {
+      // hook into the existing about tab button
       const aboutBtn = document.querySelector('.tab-btn[data-tab="about"]');
       if (aboutBtn) aboutBtn.addEventListener('click', () => setTimeout(playTyping, 50));
     }
   })();
 
+  // ============ purple/white drifting particles ============
   const canvas = document.getElementById('fx');
   const ctx = canvas.getContext('2d');
   let w, h, particles;
