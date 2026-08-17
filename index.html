@@ -117,7 +117,7 @@
   width:22px;
   height:22px;
   border-radius:50%;
-  background:#747f8d; /* offline default */
+  background:#747f8d;
   border:3px solid #0a0710;
   box-shadow:0 0 8px rgba(0,0,0,0.6);
   transition: background .3s ease;
@@ -238,7 +238,6 @@ h1{ margin-bottom:20px; }
   overflow-y:auto;
 }
 
-/* nice thin scrollbar */
 .panel-inner::-webkit-scrollbar{
   width:5px;
 }
@@ -370,41 +369,25 @@ h1{ margin-bottom:20px; }
     z-index:2;
   }
 
-  /* custom cursor */
-  html.custom-cursor, html.custom-cursor *{ cursor:none !important; }
-  #cursorDot, #cursorRing{
-    position:fixed;
-    top:0;left:0;
-    border-radius:50%;
-    pointer-events:none;
-    z-index:9999;
-    transform:translate(-50%,-50%);
+  /* ========== CUSTOM LIGHTER CURSOR ========== */
+  html.custom-cursor, html.custom-cursor * {
+    cursor: none !important;
   }
-  #cursorDot{
-    width:6px;height:6px;
-    background:var(--accent);
-    box-shadow:0 0 8px rgba(176,132,245,0.9);
-  }
-  #cursorRing{
-    width:26px;height:26px;
-    border:1.5px solid var(--accent-dim);
-    transition: width .15s ease, height .15s ease, border-color .15s ease, background .15s ease;
-  }
-  #cursorRing.hovering{
-    width:38px;height:38px;
-    border-color:var(--accent);
-    background:rgba(176,132,245,0.08);
-  }
-  .cursor-trail{
-    position:fixed;
-    top:0;left:0;
-    width:4px;height:4px;
-    border-radius:50%;
-    background:var(--accent);
-    pointer-events:none;
-    z-index:9998;
-    transform:translate(-50%,-50%);
-    opacity:0.5;
+  #cursorLighter {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 36px;
+    height: 36px;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    background-image: url('https://raw.githubusercontent.com/unity-cpu/gaybez-is-gay/main/IMG_4652.png'); /* ← CHANGE THIS AFTER YOU UPLOAD */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
   }
 
   /* spotify now playing */
@@ -500,7 +483,7 @@ h1{ margin-bottom:20px; }
   #uptimeValue{ color:var(--accent); font-weight:500; }
 
   @media (hover:none), (pointer:coarse){
-    #cursorDot, #cursorRing, .cursor-trail{ display:none !important; }
+    #cursorLighter { display:none !important; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -663,7 +646,6 @@ h1{ margin-bottom:20px; }
       label.textContent = STATUS_TEXT[s];
     }
 
-
     function applySpotify(spotify){
       const metaRow = document.querySelector('.meta-row');
       if (spotify) {
@@ -701,7 +683,6 @@ h1{ margin-bottom:20px; }
     fetchStatus();
     setInterval(fetchStatus, 20000);
 
-    // live updates via websocket, falls back to polling above if it fails
     try {
       const ws = new WebSocket('wss://api.lanyard.rest/socket');
       let heartbeatInterval;
@@ -722,7 +703,7 @@ h1{ margin-bottom:20px; }
       };
       ws.onclose = () => { if (heartbeatInterval) clearInterval(heartbeatInterval); };
       ws.onerror = () => {};
-    } catch (e) { /* websocket unsupported, polling still covers it */ }
+    } catch (e) {}
   })();
 
   // ============ Uptime counter ============
@@ -809,13 +790,8 @@ h1{ margin-bottom:20px; }
   });
 
   // ============ CONFIG: socials ============
-  // icon: 'github' | 'youtube' | 'twitter' | 'tiktok' | 'instagram' | 'twitch' | null
   const SOCIALS = [
-    //{ label: "GitHub", url: "https://github.com/unity-cpu", icon: "github" },
-    // { label: "YouTube", url: "https://youtube.com/@yourhandle", icon: "youtube" },
-    // { label: "Twitter / X", url: "https://x.com/yourhandle", icon: "twitter" },
     { label: "TikTok", url: "https://tiktok.com/@unitylolz", icon: "tiktok" },
-
   ];
 
   const SOCIAL_ICONS = {
@@ -842,7 +818,6 @@ h1{ margin-bottom:20px; }
     socialList.appendChild(li);
   });
 
-
   const discordBtn = document.getElementById('discordBtn');
   const discordLabel = document.getElementById('discordLabel');
   const discordTag = 'unity_da_modda';
@@ -855,7 +830,6 @@ h1{ margin-bottom:20px; }
       discordBtn.classList.remove('copied');
     }, 1500);
   });
-
 
   const tabs = document.querySelectorAll('.tab-btn');
   const panels = {
@@ -953,8 +927,8 @@ h1{ margin-bottom:20px; }
     const container = document.getElementById('aboutText');
     if (!container) return;
     const paragraphs = [...container.querySelectorAll('p[data-full]')];
-    const CHAR_SPEED = 35;       // ms per character
-    const LINE_GAP = 250;        // ms pause between lines
+    const CHAR_SPEED = 35;
+    const LINE_GAP = 250;
     let typing = false;
 
     function resetParagraphs(){
@@ -1005,7 +979,6 @@ h1{ margin-bottom:20px; }
         p.textContent = full;
       });
     } else {
-      // hook into the existing about tab button
       const aboutBtn = document.querySelector('.tab-btn[data-tab="about"]');
       if (aboutBtn) aboutBtn.addEventListener('click', () => setTimeout(playTyping, 50));
     }
@@ -1055,6 +1028,38 @@ h1{ margin-bottom:20px; }
   initParticles();
   window.addEventListener('resize', () => { resize(); initParticles(); });
   if(!reduceMotion) tick();
+
+  // ============ CUSTOM LIGHTER CURSOR ============
+  (function customLighterCursor(){
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    if (isTouch) return;
+
+    document.documentElement.classList.add('custom-cursor');
+
+    const cursor = document.createElement('div');
+    cursor.id = 'cursorLighter';
+    document.body.appendChild(cursor);
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let cursorX = mouseX;
+    let cursorY = mouseY;
+
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animate() {
+      // smooth follow
+      cursorX += (mouseX - cursorX) * 0.32;
+      cursorY += (mouseY - cursorY) * 0.32;
+      cursor.style.left = cursorX + 'px';
+      cursor.style.top  = cursorY + 'px';
+      requestAnimationFrame(animate);
+    }
+    animate();
+  })();
 </script>
 
 </body>
