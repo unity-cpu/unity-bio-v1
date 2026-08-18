@@ -221,16 +221,17 @@
                     background: #747f8d;
                 }
 
-        .custom-status {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: -8px;
-            margin-bottom: 12px;
-            font-style: italic;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 240px;
+        .custom-status{
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: -8px;
+        margin-bottom: 12px;
+        font-style: italic;
+        white-space: normal;          /* allow wrapping */
+        word-break: break-word;       /* break long words if needed */
+        max-width: 240px;             /* keep it centered but allow multiple lines */
+        line-height: 1.4;
+        text-align: center;
         }
 
         h1 {
