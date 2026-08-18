@@ -369,42 +369,6 @@
     z-index:2;
   }
 
-  /* ========== CUSTOM LIGHTER CURSOR ========== */
-  html.custom-cursor,
-  html.custom-cursor * {
-    cursor: none !important;
-  }
-
-  #cursorLighter {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 36px;
-    height: 36px;
-    pointer-events: none;
-    z-index: 999999;
-    transform: translate(-50%, -50%);
-    background-image: url('https://raw.githubusercontent.com/unity-cpu/gaybez-is-gay/main/IMG_4652.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-    will-change: transform;
-    opacity: 1;
-    transition: opacity 0.15s ease;
-  }
-
-  @media (hover: none), (pointer: coarse) {
-    html.custom-cursor,
-    html.custom-cursor * {
-      cursor: auto !important;
-    }
-    #cursorLighter {
-      display: none !important;
-    }
-  }
-
   /* spotify now playing */
   .spotify-card{
     display:none;
@@ -1038,49 +1002,6 @@
   initParticles();
   window.addEventListener('resize', () => { resize(); initParticles(); });
   if(!reduceMotion) tick();
-
-  // ============ CUSTOM LIGHTER CURSOR ============
-  (function customLighterCursor(){
-    if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
-
-    document.documentElement.classList.add('custom-cursor');
-
-    const cursor = document.createElement('div');
-    cursor.id = 'cursorLighter';
-    document.body.appendChild(cursor);
-
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let cursorX = mouseX;
-    let cursorY = mouseY;
-
-    const speed = 0.55; // higher = less lag
-
-    function updatePosition(e) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    }
-
-    document.addEventListener('mousemove', updatePosition, { passive: true });
-    document.addEventListener('mouseenter', updatePosition);
-
-    document.addEventListener('mouseleave', () => {
-      cursor.style.opacity = '0';
-    });
-
-    document.addEventListener('mouseenter', () => {
-      cursor.style.opacity = '1';
-    });
-
-    function animate() {
-      cursorX += (mouseX - cursorX) * speed;
-      cursorY += (mouseY - cursorY) * speed;
-      cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-  })();
 </script>
 
 </body>
