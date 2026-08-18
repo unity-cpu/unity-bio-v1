@@ -481,6 +481,7 @@
             justify-content: center;
             gap: 16px;
             margin-top: 14px;
+            flex-wrap: wrap;
             transition: margin-top .25s ease;
         }
 
@@ -507,6 +508,21 @@
                 .view-counter svg path {
                     fill: var(--muted);
                 }
+
+        #onlineCounter .dot-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3ba55c;
+            box-shadow: 0 0 8px rgba(59,165,92,0.8);
+            display: inline-block;
+            animation: onlinePulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes onlinePulse {
+            0%,100% { opacity: 0.5; transform: scale(0.85); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
 
         .like-btn {
             display: flex;
@@ -751,6 +767,10 @@
             #typeSubtitle .cursor {
                 animation: none;
             }
+
+            #onlineCounter .dot-pulse {
+                animation: none;
+            }
         }
     </style>
 </head>
@@ -842,6 +862,10 @@
                 <svg viewBox="0 0 24 24" fill="none"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9ZM12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" /></svg>
                 <span id="viewCount">…</span> views
             </div>
+            <div class="view-counter" id="onlineCounter">
+                <span class="dot-pulse"></span>
+                <span id="onlineCount">…</span> online
+            </div>
             <button class="like-btn" id="likeBtn" type="button">
                 <svg viewBox="0 0 24 24"><path d="M12 20.5s-7-4.35-9.5-8.8C.8 8.6 2 5 5.3 4.2 7.6 3.6 9.8 4.7 12 7.5c2.2-2.8 4.4-3.9 6.7-3.3C22 5 23.2 8.6 21.5 11.7 19 16.15 12 20.5 12 20.5Z" /></svg>
                 <span id="likeCount">…</span>
@@ -856,6 +880,10 @@
 
     <footer>makilahhhh and notagirll is very cool :> </footer>
 
+    <!-- Firebase (for live "online now" presence counter) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
     <script>
         const BACKGROUND = {
@@ -987,6 +1015,65 @@
                 ws.onclose = () => { if (heartbeatInterval) clearInterval(heartbeatInterval); };
                 ws.onerror = () => { };
             } catch (e) { }
+        })();
+
+        // ============ Live "online now" presence (Firebase Realtime Database) ============
+        // SETUP REQUIRED (one-time, ~3 min):
+        // 1. console.firebase.google.com -> New project -> Build > Realtime Database -> Create (test mode)
+        // 2. Build > Authentication -> Sign-in method -> enable "Anonymous"
+        // 3. Project settings (gear icon) -> your web app -> copy the config values below
+        // 4. In Realtime Database > Rules, paste:
+        //    {
+        //      "rules": {
+        //        "presence": {
+        //          ".read": true,
+        //          "$uid": { ".write": "auth != null && auth.uid === $uid" }
+        //        }
+        //      }
+        //    }
+        (function onlinePresence() {
+            const firebaseConfig = {
+                apiKey: "YOUR_API_KEY",
+                authDomain: "YOUR_PROJECT.firebaseapp.com",
+                databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+                projectId: "YOUR_PROJECT"
+            };
+
+            const el = document.getElementById('onlineCount');
+            if (!el) return;
+
+            // Bail out quietly if config hasn't been filled in yet
+            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY") {
+                el.textContent = '—';
+                return;
+            }
+
+            try {
+                firebase.initializeApp(firebaseConfig);
+                const db = firebase.database();
+                const auth = firebase.auth();
+
+                auth.signInAnonymously().catch(() => { el.textContent = '—'; });
+
+                auth.onAuthStateChanged(user => {
+                    if (!user) return;
+                    const myRef = db.ref('presence/' + user.uid);
+                    const connectedRef = db.ref('.info/connected');
+
+                    connectedRef.on('value', snap => {
+                        if (snap.val() === true) {
+                            myRef.onDisconnect().remove();
+                            myRef.set(true);
+                        }
+                    });
+                });
+
+                db.ref('presence').on('value', snap => {
+                    el.textContent = snap.numChildren().toLocaleString();
+                }, () => { el.textContent = '—'; });
+            } catch (e) {
+                el.textContent = '—';
+            }
         })();
 
         // ============ Uptime counter ============
