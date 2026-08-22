@@ -39,10 +39,6 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
         }
 
         #bgMediaWrap {
@@ -751,22 +747,6 @@
             font-weight: 500;
         }
 
-        /* devtools-open warning overlay */
-        #dtWarning {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: #000;
-            color: #fff;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-family: var(--font);
-            font-size: 18px;
-            padding: 20px;
-        }
-
         @media (prefers-reduced-motion: reduce) {
             .card {
                 animation: none;
@@ -795,8 +775,6 @@
     </style>
 </head>
 <body>
-
-    <div id="dtWarning">this page's dev tools are disabled</div>
 
     <div id="bgMediaWrap"></div>
 
@@ -908,44 +886,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
     <script>
-        // ============ Basic source/dev-tools deterrents ============
-        // Note: these only stop casual right-click/shortcut attempts.
-        // They do not and cannot prevent someone from viewing source via
-        // browser menus, view-source:, curl, or by disabling JS.
-        (function guardSource() {
-            document.addEventListener('contextmenu', e => e.preventDefault());
-
-            document.addEventListener('keydown', e => {
-                const k = e.key ? e.key.toLowerCase() : '';
-                const blockCombo =
-                    e.key === 'F12' ||
-                    (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(k)) ||
-                    (e.ctrlKey && k === 'u') ||
-                    (e.metaKey && e.altKey && ['i', 'j', 'c'].includes(k)); // mac
-                if (blockCombo) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-
-            document.addEventListener('dragstart', e => e.preventDefault());
-
-            // Rough devtools-open detector via window size delta.
-            // Heuristic only — can false-positive on some layouts/zoom levels.
-            const warning = document.getElementById('dtWarning');
-            const threshold = 160;
-            let wasOpen = false;
-            setInterval(() => {
-                const widthDelta = window.outerWidth - window.innerWidth;
-                const heightDelta = window.outerHeight - window.innerHeight;
-                const open = widthDelta > threshold || heightDelta > threshold;
-                if (open !== wasOpen) {
-                    wasOpen = open;
-                    if (warning) warning.style.display = open ? 'flex' : 'none';
-                }
-            }, 800);
-        })();
-
         const BACKGROUND = {
             type: 'video',
             url: 'https://raw.githubusercontent.com/unity-cpu/gaybez-is-gay/main/ssstik.io_%40d3prxssd3_1786150663023.mp4'
